@@ -14,7 +14,11 @@
 
 # cookie-store
 
-<!-- description -->
+An [RFC-6265](https://tools.ietf.org/html/rfc6265) cookie store to implement the mechanism of HTTP cookie and Set-Cookie header fields as a browser do.
+
+- A central store for different domains and paths
+- Set cookies as if from a certain domain and path
+- Get cookies as if from a certain domain and path
 
 ## Install
 
@@ -25,8 +29,57 @@ $ npm install cookie-store --save
 ## Usage
 
 ```js
-const cookie_store = require('cookie-store')
+const CookieStore = require('cookie-store')
+const cs = new CookieStore()
+
+const cookie = cs.from({
+  domain: 'bar.foo.com',
+  path: '/a'
+})
+
+cookie.set('foo', 'a', {
+  domain: '.foo.com'
+})
+
+cookie.get('foo')
+// 'a'
 ```
+
+## cs.from({domain, path})
+
+Returns `Cookie` the cookie handle for specific domain and path
+
+## cs.restart()
+
+Restarts the cookie store, and filters out session cookies.
+
+## cookie.set(key, value, options)
+
+- **key** `String`
+- **value** `String`
+- **options** `Object=`
+  - domain
+  - path
+
+## cookie.setCookie(setCookieHeader)
+
+- **setCookieHeader** `String` the value of the HTTP Set-Cookie header.
+
+## cookie.get(key, options)
+
+- **key** `String`
+- **options** `Object=`
+
+## cookie.remove(key)
+
+## cookie.toHeader()
+
+Returns `String` the value of HTTP Cookie header
+
+## cookie.applyResponse({status, headers})
+
+- **status** `Number`
+- **headers** `Object`
 
 ## License
 
