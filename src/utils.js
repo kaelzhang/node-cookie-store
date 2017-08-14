@@ -13,7 +13,7 @@ const SLASH = '/'
 const CHAR_CODE_SLASH = SLASH.charCodeAt(0)
 
 
-export formatDomain = parsed => {
+export const formatDomain = parsed => {
   const {
     subdomain,
     domain,
@@ -22,16 +22,16 @@ export formatDomain = parsed => {
 
   return subdomain
     // b.a.com -> b.a.com
-    ? origin
+    ? [subdomain, domain, tld].join(DOT)
 
     // a.com -> .a.com
-    : `.${domain}.${tld}`
+    : [, domain, tld].join(DOT)
 }
 
 
 // The RFC-6265 Domain Matching
 // https://tools.ietf.org/html/rfc6265#section-5.1.3
-export domainMatch = (given, compareWith) => {
+export const domainMatch = (given, compareWith) => {
   if (given === compareWith) {
     return true
   }
@@ -56,7 +56,7 @@ export domainMatch = (given, compareWith) => {
 
 // The RFC-6265 Path-Match
 // https://tools.ietf.org/html/rfc6265#section-5.1.4
-export pathMatch = (given, compareWith) => {
+export const pathMatch = (given, compareWith) => {
   // Identical
   if (given === compareWith) {
     return true
@@ -84,7 +84,7 @@ export pathMatch = (given, compareWith) => {
 
 
 // Get the default cookie path from the request url
-export defaultPath = uri => {
+export const defaultPath = uri => {
   const pathname = parse(uri).pathname
 
   // > 2. If the uri-path is empty or if the first character of the uri-path is not a %x2F ("/") character, output %x2F ("/") and skip the remaining steps.
@@ -100,11 +100,11 @@ export defaultPath = uri => {
 }
 
 
-export isValidCookiePath = uri => uri.indexOf(SLASH) === 0
+export const isValidCookiePath = uri => uri.indexOf(SLASH) === 0
 
 
 // Throw an error with message and code
-export error = (message, code) => {
+export const error = (message, code) => {
   const err = new Error(message)
 
   if (code) {
@@ -116,7 +116,7 @@ export error = (message, code) => {
 
 
 // Parse the HTTP header Set-Cookie
-export parseSetCookie = header => {
+export const parseSetCookie = header => {
   return setCookieParser({
     headers: {
       'set-cookie': [header]
@@ -129,13 +129,13 @@ export parseSetCookie = header => {
 // > Cookies with longer paths are listed before cookies with
 // shorter paths.
 // > Among cookies that have equal-length path fields, cookies with earlier creation-times are listed before cookies with later creation-times.
-export sortCookies = cookies => {
+export const sortCookies = cookies => {
   const collection = Object.create(null)
   cookies.forEach(cookie => {
     addToCollection(collection, cookie.path.length, cookie)
   })
 
-  const list = []
+  let list = []
 
   Object.keys(collection)
   .sort((a, b) => a < b)

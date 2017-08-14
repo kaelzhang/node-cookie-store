@@ -1,6 +1,7 @@
 import {
   cleanCookieDomain,
   pathMatch,
+  domainMatch,
   formatDomain,
   error
 } from './utils'

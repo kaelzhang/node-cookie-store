@@ -1,6 +1,7 @@
 {
   "plugins": [
     "add-module-exports",
+    "transform-es2015-modules-commonjs",
     "transform-class-properties",
     "transform-object-rest-spread",
     "transform-exponentiation-operator",

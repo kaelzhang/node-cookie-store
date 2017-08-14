@@ -17,6 +17,10 @@ export default class Store {
   _getByKey (key) {
     const cookie = this._store[key]
 
+    if (!cookie) {
+      return null
+    }
+
     const expired = cookie.persistant
       ? cookie.expiryTime > new Date
       : false

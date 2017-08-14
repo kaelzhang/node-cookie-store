@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "An RFC-6265 cookie store to implement the mechanism of HTTP cookie and Set-Cookie header fields as a browser do.",
   "main": "lib/index.js",
+  "module": "src/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
     "test": "npm run build && node --harmony ./node_modules/.bin/ava --verbose --timeout=10s",
@@ -42,6 +43,7 @@
     "babel-plugin-syntax-trailing-function-commas": "^6.13.0",
     "babel-plugin-transform-async-to-generator": "^6.22.0",
     "babel-plugin-transform-class-properties": "^6.16.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
     "babel-plugin-transform-exponentiation-operator": "^6.8.0",
     "babel-plugin-transform-inline-environment-variables": "^6.8.0",
     "babel-plugin-transform-object-rest-spread": "^6.16.0",
@@ -50,6 +52,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",
-    "parse-domain": "^1.1.0"
+    "parse-domain": "^1.1.0",
+    "set-cookie-parser": "^2.0.0"
   }
 }
