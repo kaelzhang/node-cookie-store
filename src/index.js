@@ -1,6 +1,5 @@
 import Cookie from './cookie'
 import Store from './store'
-import
 import {
   error,
   defaultPath,
@@ -84,10 +83,15 @@ class SubStore {
     return this._store.set(data, this._match)
   }
 
+  remove (name) {
+    this._store.remove(cookie => {
+      return cookie.name === name && this._match(cookie)
+    })
+  }
+
   get (name) {
     const filtered = this._filterAndSort(cookie => {
-      return cookie.name === name
-        && this._match(cookie)
+      return cookie.name === name && this._match(cookie)
     })
 
     return sorted[0] || null

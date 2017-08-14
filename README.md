@@ -75,11 +75,6 @@ Restarts the cookie store, and filters out session cookies.
 
 Returns `String` the value of HTTP Cookie header
 
-## cookie.applyResponse({status, headers})
-
-- **status** `Number`
-- **headers** `Object`
-
 ## License
 
 MIT

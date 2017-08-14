@@ -22,11 +22,19 @@ export default class Store {
       : false
 
     if (expired) {
-      delete this._store[cookie[SYMBOL_KEY]]
+      this._removeCookie(cookie)
       return null
     }
 
     return cookie
+  }
+
+  remove (remover) {
+    this.forEach(cookie => {
+      if (remover(cookie)) {
+        this._removeCookie(cookie)
+      }
+    })
   }
 
   set (data, checker) {
@@ -58,30 +66,34 @@ export default class Store {
     return this._store[key] = cookie
   }
 
-  clean (fn) {
+  _removeCookie (cookie) {
+    delete this._store[cookie[SYMBOL_KEY]]
+  }
+
+  clean (except) {
     this.forEach((cookie, key) => {
-      if (!fn(cookie)) {
+      if (!except(cookie)) {
         delete this._store[key]
       }
     })
   }
 
-  forEach (fn) {
+  forEach (iterator) {
     let key
     const store = this._store
     for (key in store) {
       const cookie = this._getByKey(key)
 
       if (cookie) {
-        fn(store[key], key)
+        iterator(store[key], key)
       }
     }
   }
 
-  filter (fn) {
+  filter (filter) {
     const collected = []
     this.forEach((cookie, key) => {
-      if (fn(cookie)) {
+      if (filter(cookie)) {
         collected.push(cookie)
       }
     })

@@ -120,7 +120,7 @@ Object.defineProperties(Cookie.prototype, {
       }
 
       this._httpOnly = !!httpOnly
-    }
+    },
 
     get () {
       return this._httpOnly

@@ -1,15 +1,12 @@
 {
-  "presets": [
-    "es2015"
-  ],
   "plugins": [
+    "add-module-exports",
     "transform-class-properties",
     "transform-object-rest-spread",
     "transform-exponentiation-operator",
     "transform-async-to-generator",
     "syntax-trailing-function-commas",
     "transform-inline-environment-variables",
-    "transform-es2015-modules-commonjs",
     [
       "transform-runtime", {
         "regenerator": true
