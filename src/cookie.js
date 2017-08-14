@@ -1,8 +1,15 @@
 import {
   cleanCookieDomain,
+  pathMatch,
+  formatDomain,
   error
 } from './utils'
 
+import parseDomain from 'parse-domain'
+
+
+// Implementation of Cookie
+// https://tools.ietf.org/html/rfc6265#section-4.2
 export default class Cookie {
   constructor ({
     name,
@@ -12,6 +19,7 @@ export default class Cookie {
     expires,
     secure,
     httpOnly,
+    hostOnly,
     value
   }) {
 
@@ -20,7 +28,7 @@ export default class Cookie {
     this.httpOnly = httpOnly
     this.secureOnly = !!secure
 
-    this.hostOnly = true
+    this.hostOnly = hostOnly
     this.persistant = false
 
     maxAge
@@ -31,6 +39,16 @@ export default class Cookie {
     this.path = path
 
     this.value = value
+  }
+
+  match (domain, path) {
+    if (!pathMatch(path, this.path)) {
+      return false
+    }
+
+    return this.hostOnly
+      ? domain === this.domain
+      : domainMatch(domain, this.domain)
   }
 }
 
@@ -78,14 +96,15 @@ Object.defineProperties(Cookie.prototype, {
 
   domain: {
     set (domain) {
-      domain = cleanCookieDomain(domain)
+      const parsed = parseDomain(domain)
 
-      if (!domain) {
+      if (!parsed) {
         error('invalid domain', 'INVALID_DOMAIN')
       }
 
-      this._domain = domain
-      this.hostOnly = !domain
+      this._domain = this.hostOnly
+        ? domain
+        : formatDomain(parsed)
     },
 
     get () {

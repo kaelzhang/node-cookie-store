@@ -2,7 +2,7 @@ import {
   parse
 } from 'url'
 
-import parseDomain from 'parse-domain'
+
 import setCookieParser from 'set-cookie-parser'
 
 
@@ -13,13 +13,7 @@ const SLASH = '/'
 const CHAR_CODE_SLASH = SLASH.charCodeAt(0)
 
 
-export cleanCookieDomain = origin => {
-  const parsed = parseDomain(origin)
-
-  if (!parsed) {
-    return null
-  }
-
+export formatDomain = parsed => {
   const {
     subdomain,
     domain,
@@ -89,6 +83,7 @@ export pathMatch = (given, compareWith) => {
 }
 
 
+// Get the default cookie path from the request url
 export defaultPath = uri => {
   const pathname = parse(uri).pathname
 
@@ -108,6 +103,7 @@ export defaultPath = uri => {
 export isValidCookiePath = uri => uri.indexOf(SLASH) === 0
 
 
+// Throw an error with message and code
 export error = (message, code) => {
   const err = new Error(message)
 
@@ -119,10 +115,42 @@ export error = (message, code) => {
 }
 
 
+// Parse the HTTP header Set-Cookie
 export parseSetCookie = header => {
   return setCookieParser({
     headers: {
       'set-cookie': [header]
     }
   })[0]
+}
+
+
+// Sort the cookie list according to the rfc
+// > Cookies with longer paths are listed before cookies with
+// shorter paths.
+// > Among cookies that have equal-length path fields, cookies with earlier creation-times are listed before cookies with later creation-times.
+export sortCookies = cookies => {
+  const collection = Object.create(null)
+  cookies.forEach(cookie => {
+    addToCollection(collection, cookie.path.length, cookie)
+  })
+
+  const list = []
+
+  Object.keys(collection)
+  .sort((a, b) => a < b)
+  .forEach(length => {
+    list = list.concat(
+      collection[length].sort(
+        (a, b) => a.creationTime > b.creationTime
+      )
+    )
+  })
+
+  return list
+}
+
+function addToCollection (collection, length, item) {
+  const c = collection[length] || (collection[length] = [])
+  c.push(item)
 }

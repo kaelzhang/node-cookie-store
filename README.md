@@ -23,7 +23,7 @@ An [RFC-6265](https://tools.ietf.org/html/rfc6265) cookie store to implement the
 ## Install
 
 ```sh
-$ npm install cookie-store --save
+$ npm install cookie-store
 ```
 
 ## Usage

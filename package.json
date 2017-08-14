@@ -1,7 +1,7 @@
 {
   "name": "cookie-store",
   "version": "1.0.0",
-  "description": "An RFC-6265 cookie store to imitate the mechanism which a browser do.",
+  "description": "An RFC-6265 cookie store to implement the mechanism of HTTP cookie and Set-Cookie header fields as a browser do.",
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
@@ -51,8 +51,6 @@
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",
-    "cookie": "^0.3.1",
-    "parse-domain": "^1.1.0",
-    "set-cookie-parser": "^2.0.0"
+    "parse-domain": "^1.1.0"
   }
 }
