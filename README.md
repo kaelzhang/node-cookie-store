@@ -65,10 +65,9 @@ Restarts the cookie store, and filters out session cookies.
 
 - **setCookieHeader** `String` the value of the HTTP Set-Cookie header.
 
-## cookie.get(key, options)
+## cookie.get(key)
 
 - **key** `String`
-- **options** `Object=`
 
 ## cookie.remove(key)
 

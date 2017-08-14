@@ -1,21 +1,21 @@
 import {
-  domainMatch
+  cleanCookieDomain,
+  error
 } from './utils'
 
 export default class Cookie {
   constructor ({
+    name,
     domain,
     path,
     maxAge,
     expires,
     secure,
-    httpOnly
+    httpOnly,
+    value
   }) {
 
-    const time = Date.now()
-
-    this.creationTime =
-    this.lastAccessTime = time
+    this.name = name
 
     this.httpOnly = httpOnly
     this.secureOnly = !!secure
@@ -29,6 +29,8 @@ export default class Cookie {
 
     this.domain = domain
     this.path = path
+
+    this.value = value
   }
 }
 
@@ -56,8 +58,32 @@ Object.defineProperties(Cookie.prototype, {
     }
   },
 
+  value: {
+    set (value) {
+      this._value = value
+
+      const time = new Date
+      this.creationTime = time
+
+      if (!this.lastAccessTime) {
+        this.lastAccessTime = time
+      }
+    },
+
+    get () {
+      this.lastAccessTime = new Date
+      return this._value
+    }
+  },
+
   domain: {
     set (domain) {
+      domain = cleanCookieDomain(domain)
+
+      if (!domain) {
+        error('invalid domain', 'INVALID_DOMAIN')
+      }
+
       this._domain = domain
       this.hostOnly = !domain
     },
