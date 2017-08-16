@@ -32,17 +32,18 @@ export const formatDomain = parsed => {
 // The RFC-6265 Domain Matching
 // https://tools.ietf.org/html/rfc6265#section-5.1.3
 export const domainMatch = (given, compareWith) => {
+  // .foo.com -> foo.com
+  const startsWithDot = compareWith.indexOf(DOT) === 0
+  if (startsWithDot) {
+    compareWith = compareWith.slice(1)
+  }
+
   if (given === compareWith) {
     return true
   }
 
   if (given.lastIndexOf(compareWith) !== 0) {
     return false
-  }
-
-  const startsWithDot = compareWith.indexOf(DOT) === 0
-  if (startsWithDot) {
-    compareWith = compareWith.slice(1)
   }
 
   const lastIndexNotIncluded = given.length - 1 - compareWith.length
@@ -126,9 +127,6 @@ export const parseSetCookie = header => {
 
 
 // Sort the cookie list according to the rfc
-// > Cookies with longer paths are listed before cookies with
-// shorter paths.
-// > Among cookies that have equal-length path fields, cookies with earlier creation-times are listed before cookies with later creation-times.
 export const sortCookies = cookies => {
   const collection = Object.create(null)
   cookies.forEach(cookie => {
@@ -138,9 +136,12 @@ export const sortCookies = cookies => {
   let list = []
 
   Object.keys(collection)
+  // > Cookies with longer paths are listed before cookies with
+  // shorter paths.
   .sort((a, b) => a < b)
   .forEach(length => {
     list = list.concat(
+      // > Among cookies that have equal-length path fields, cookies with earlier creation-times are listed before cookies with later creation-times.
       collection[length].sort(
         (a, b) => a.creationTime > b.creationTime
       )

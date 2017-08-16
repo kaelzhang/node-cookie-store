@@ -1,6 +1,6 @@
-import Cookie from './cookie'
-
-const SYMBOL_KEY = Symbol.for('cookie-store:cookie:key')
+import Cookie, {
+  SYMBOL_KEY
+} from './cookie'
 
 
 export default class Store {

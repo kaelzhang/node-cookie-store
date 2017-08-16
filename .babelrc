@@ -18,5 +18,11 @@
   "parserOpts": {
     // Allow returns in the module
     "allowReturnOutsideFunction": true
+  },
+
+  "env": {
+    "development": {
+      "sourceMaps": "inline"
+    }
   }
 }

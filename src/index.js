@@ -35,8 +35,12 @@ class SubStore {
       value
     }
 
+    // > If the domain-attribute is empty.
     if (!data.domain) {
+      // > Set the cookie's domain to the canonicalized request-host.
       data.domain = this._domain
+      // > Set the cookie's host-only-flag to true.
+      data.hostOnly = true
     }
 
     if (!data.path) {

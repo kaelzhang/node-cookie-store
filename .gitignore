@@ -19,6 +19,7 @@
 *.rdb
 *.db
 nohup.out
+.nyc_output
 
 # OS or Editor folders
 .DS_Store

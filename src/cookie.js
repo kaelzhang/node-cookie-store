@@ -9,6 +9,8 @@ import {
 import parseDomain from 'parse-domain'
 
 
+export const SYMBOL_KEY = Symbol.for('cookie-store:cookie:key')
+
 // Implementation of Cookie
 // https://tools.ietf.org/html/rfc6265#section-4.2
 export default class Cookie {
@@ -99,7 +101,7 @@ Object.defineProperties(Cookie.prototype, {
     set (domain) {
       const parsed = parseDomain(domain)
 
-      if (!parsed) {
+      if (!parsed || !parsed.domain) {
         error('invalid domain', 'INVALID_DOMAIN')
       }
 
@@ -126,5 +128,9 @@ Object.defineProperties(Cookie.prototype, {
     get () {
       return this._httpOnly
     }
+  },
+
+  [SYMBOL_KEY]: {
+    writable: true
   }
 })
