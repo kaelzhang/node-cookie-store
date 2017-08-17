@@ -631,12 +631,12 @@ test('maxAge must be a number', async t => {
   c.maxAge = {}
   t.is(c.expiryTime, undefined, 'should ignore object')
 
-  c.maxAge = 100
+  c.maxAge = 200
 
   await delay(1)
   t.is(cookie.get('foo').value, 'bar', 'should not expire')
 
-  await delay(100)
+  await delay(200)
   t.is(cookie.get('foo'), null, 'should expire')
 })
 
