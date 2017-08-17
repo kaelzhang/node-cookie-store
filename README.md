@@ -15,11 +15,13 @@
 
 # cookie-store
 
-An [RFC-6265](https://tools.ietf.org/html/rfc6265) cookie store to implement the mechanism of HTTP cookie and Set-Cookie header fields as a browser do.
+An cookie store that fully complies to [RFC-6265](https://tools.ietf.org/html/rfc6265) and implements the mechanism of HTTP cookie and Set-Cookie header fields as a browser do.
 
 - A central store for different domains and paths
 - Set cookies as if from a certain domain and path
 - Get cookies as if from a certain domain and path
+
+
 
 ## Install
 
@@ -89,7 +91,7 @@ Returns `Array.<Cookie>` all matched cookies which have name `name`.
 
 ## handler.get(name)
 
-- **name** `String`
+- **name** `String` cookie name
 
 Searches and returns the most matching cookie according to the sorting rule:  [https://tools.ietf.org/html/rfc6265#section-5.4](https://tools.ietf.org/html/rfc6265#section-5.4)
 
