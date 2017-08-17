@@ -33,48 +33,91 @@ $ npm install cookie-store
 const CookieStore = require('cookie-store')
 const cs = new CookieStore()
 
-const cookie = cs.from({
+const handler = cs.from({
   domain: 'bar.foo.com',
   path: '/a'
 })
 
-cookie.set('foo', 'a', {
+handler.set('foo', 'a', {
   domain: '.foo.com'
 })
 
-cookie.get('foo')
+handler.get('foo').value
 // 'a'
 ```
 
-## cs.from({domain, path})
+## cs.from({domain, path, nonHTTP}) : Handler
 
-Returns `Cookie` the cookie handle for specific domain and path
+- **domain** `String`
+- **path** `String`
+- **http** `Boolean=true` indicate that we will manipulate cookie via HTTP APIs. Defaults to `true`
+
+Returns `Handler` the cookie handler for specific domain and path.
 
 ## cs.restart()
 
 Restarts the cookie store, and filters out session cookies.
 
-## cookie.set(key, value, options)
+## handler.set(key, value, options)
 
 - **key** `String`
 - **value** `String`
 - **options** `Object=`
-  - domain
-  - path
+  - domain `String=` Optional. If not specified, the cookie's [host-only-flag](https://tools.ietf.org/html/rfc6265#section-5.3) will be set to `true`
+  - path `String=` Optional. If not specified, it will
+  - httpOnly `Boolean=false` whether set the cookie's http-only-flag to `true`
+  - maxAge `Number`
+  - expires `Date|TimeStamp`
 
-## cookie.setCookie(setCookieHeader)
+Set a cookie.
+
+Returns
+- `Cookie` if it has succeeded to set the cookie
+- `null` if it fails to set the cookie
+
+## handler.setCookie(setCookieHeader)
 
 - **setCookieHeader** `String` the value of the HTTP Set-Cookie header.
 
-## cookie.get(key)
+Set a cookie via HTTP Set-Cookie header.
 
-- **key** `String`
+Returns `Cookie|null` as well as `handler.set()`
 
-## cookie.remove(key)
+## handler.getAll(name)
 
-## cookie.toHeader()
+Returns `Array.<Cookie>` all matched cookies which have name `name`.
+
+## handler.get(name)
+
+- **name** `String`
+
+Searches and returns the most matching cookie according to the sorting rule:  [https://tools.ietf.org/html/rfc6265#section-5.4](https://tools.ietf.org/html/rfc6265#section-5.4)
+
+Returns
+- `Cookie` if an available cookie is found
+- `null` if no matched cookie.
+
+## handler.remove(name)
+
+Removes all matched cookies of the name `name`.
+
+## handler.toHeader()
 
 Returns `String` the value of HTTP Cookie header
+
+## Struct: Cookie
+
+- name
+- value
+- domain
+- path
+- httpOnly
+- hostOnly
+- persistent
+- expiryTime
+
+The [RFC-6265](https://tools.ietf.org/html/rfc6265) cookie object.
+
 
 ## License
 

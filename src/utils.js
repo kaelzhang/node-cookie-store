@@ -42,11 +42,13 @@ export const domainMatch = (given, compareWith) => {
     return true
   }
 
-  if (given.lastIndexOf(compareWith) !== 0) {
+  const lastIndex = given.length - compareWith.length
+
+  if (given.lastIndexOf(compareWith) !== lastIndex) {
     return false
   }
 
-  const lastIndexNotIncluded = given.length - 1 - compareWith.length
+  const lastIndexNotIncluded = lastIndex - 1
   if (given.charCodeAt(lastIndexNotIncluded) === CHAR_CODE_DOT) {
     return true
   }
@@ -63,8 +65,10 @@ export const pathMatch = (given, compareWith) => {
     return true
   }
 
-  // `given` must be the prefix of `compareWith`
+  // `compareWith` must be the prefix of `given`
   if (given.indexOf(compareWith) !== 0) {
+    // given: /bcd
+    // compareWith: /abc
     return false
   }
 
@@ -107,11 +111,7 @@ export const isValidCookiePath = uri => uri.indexOf(SLASH) === 0
 // Throw an error with message and code
 export const error = (message, code) => {
   const err = new Error(message)
-
-  if (code) {
-    err.code = code
-  }
-
+  err.code = code
   throw err
 }
 

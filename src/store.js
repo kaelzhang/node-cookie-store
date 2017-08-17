@@ -8,11 +8,6 @@ export default class Store {
     this._store = Object.create(null)
   }
 
-  get (name, domain, path) {
-    const key = serialize(name, domain, path)
-    return this._store[key]
-  }
-
   // Get the cookie by key, and check if expired
   _getByKey (key) {
     const cookie = this._store[key]
@@ -54,11 +49,14 @@ export default class Store {
     const key = serialize(name, domain, path)
     const cookie = this._getByKey(key)
 
+    // Cookie does not exist
     if (!cookie) {
-      return this._create(key, data)
+      return this._create(key, data, checker)
     }
 
+    // Cookie exists
     if (!checker(cookie)) {
+      // But the curruent domain/path could not modify the cookie
       return null
     }
 
@@ -67,10 +65,13 @@ export default class Store {
     return cookie
   }
 
-  _create (key, data) {
+  _create (key, data, checker) {
     const cookie = new Cookie(data)
     cookie[SYMBOL_KEY] = key
-    return this._store[key] = cookie
+
+    return checker(cookie)
+      ? this._store[key] = cookie
+      : null
   }
 
   _removeCookie (cookie) {

@@ -50,7 +50,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.16.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-register": "^6.24.1",
-    "codecov.io": "^0.1.6",
+    "codecov": "^2.3.0",
     "delay": "^2.0.0",
     "make-array": "^1.0.2",
     "nyc": "^11.1.0"

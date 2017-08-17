@@ -108,11 +108,13 @@ const testReturnType = (t, expect, to, description) => {
     c: [{
       name: 'foo',
       value: 'bar',
-      domain: 'foo2.com'
+      domain: 'foo2.com',
+      returnNull: true
     }, {
       name: 'foo2',
       value: 'bar',
-      path: '/index/bcd'
+      path: '/index/bcd',
+      returnNull: true
     }]
   },
   r: {
@@ -170,7 +172,7 @@ const testReturnType = (t, expect, to, description) => {
 },
 
 {
-  d: 'cookie.set: invalid domain',
+  d: 'cookie.set(): invalid domain',
   s: {
     from: DEFAULT_FROM,
     c: [{
@@ -228,7 +230,7 @@ const testReturnType = (t, expect, to, description) => {
 },
 
 {
-  d: 'c.from errors',
+  d: 'cs.from() errors',
   s: [{
     from: {
       domain: 'foo.com'
@@ -307,7 +309,8 @@ const testReturnType = (t, expect, to, description) => {
     }, {
       name: 'foo',
       value: 'bar4',
-      path: '/a/b/c/d/e/f'
+      path: '/a/b/c/d/e/f',
+      returnNull: true
     }]
   },
   r: {
@@ -319,14 +322,100 @@ const testReturnType = (t, expect, to, description) => {
   d: 'domain filtering',
   s: {
     from: {
-      domain: 'a.b.c.d.foo.com',
+      domain: 'b.a.foo.com',
       path: '/index'
     },
     c: [{
       name: 'foo',
       value: 'bar',
-      domain: ''
+      domain: 'b.foo.com',
+      returnNull: true
+    }, {
+      name: 'foo2',
+      value: 'bar',
+      domain: 'ab.a.foo.com',
+      returnNull: true
+    }, {
+      name: 'foo3',
+      value: 'bar',
+      domain: 'a.foo.com'
     }]
+  },
+  r: {
+    c: [{
+      name: 'foo',
+      isNull: true
+    }, {
+      name: 'foo2',
+      isNull: true
+    }, {
+      name: 'foo3',
+      value: 'bar'
+    }]
+  }
+},
+
+{
+  d: 'must not override if domain/path not match',
+  s: [{
+    from: {
+      domain: 'b.a.foo.com',
+      path: '/a/b/c/d'
+    },
+    c: {
+      name: 'foo',
+      value: 'bar',
+      domain: 'b.a.foo.com',
+      path: '/a/b/c/d'
+    }
+  }, {
+    // domain not match
+    from: {
+      domain: 'b.foo.com',
+      path: '/a/b/c/d'
+    },
+    c: {
+      name: 'foo',
+      value: 'bar2',
+      domain: 'b.a.foo.com',
+      path: '/a/b/c/d',
+      returnNull: true
+    }
+  }, {
+    // could alter cookie of subpaths
+    from: {
+      domain: 'b.a.foo.com',
+      path: '/a/b/c'
+    },
+    c: {
+      name: 'foo',
+      value: 'bar3',
+      domain: 'b.a.foo.com',
+      path: '/a/b/c/d',
+      returnNull: true
+    }
+  }, {
+    from: {
+      domain: 'b.a.foo.com',
+      path: '/a/b/c/de'
+    },
+    c: {
+      name: 'foo',
+      value: 'bar4',
+      domain: 'b.a.foo.com',
+      path: '/a/b/c/d',
+      returnNull: true
+    }
+  }],
+  r: {
+    from: {
+      domain: 'b.a.foo.com',
+      path: '/a/b/c/d'
+    },
+    c: {
+      name: 'foo',
+      value: 'bar'
+    }
   }
 }
 
@@ -365,6 +454,7 @@ const testReturnType = (t, expect, to, description) => {
       makeArray(c).forEach(({
         name,
         value,
+        returnNull,
         e,
         ...options
       }) => {
@@ -379,12 +469,20 @@ const testReturnType = (t, expect, to, description) => {
           return
         }
 
-        testReturnType(t, ret, Cookie, `cookie.set("${name}")`)
+        const m = `cookie.set(${name}, ${value}, ${JSON.stringify(options)})`
+
+        if (returnNull) {
+          t.is(ret, null, `the return value of ${m} should be null`)
+          return
+        }
+
+        testReturnType(t, ret, Cookie, m)
       })
 
       makeArray(h).forEach(({
         h,
-        e
+        e,
+        returnNull
       }) => {
         let ret
 
@@ -396,7 +494,14 @@ const testReturnType = (t, expect, to, description) => {
           return
         }
 
-        testReturnType(t, ret, Cookie, `cookie.setCookie("${h}")`)
+        const m = `cookie.setCookie("${h}")`
+
+        if (returnNull) {
+          t.is(ret, null, `the return value of ${m} should be null`)
+          return
+        }
+
+        testReturnType(t, ret, Cookie, m)
       })
 
       makeArray(r).forEach(name => {

@@ -53,7 +53,7 @@ class SubStore {
     }
 
     if (!data.path) {
-      data.path = this._path
+      data.path = defaultPath(this._path)
     }
 
     return this._store.set(data, this._match)
@@ -66,11 +66,13 @@ class SubStore {
   }
 
   get (name) {
-    const filtered = this._filterAndSort(cookie => {
+    return this.getAll(name)[0] || null
+  }
+
+  getAll (name) {
+    return this._filterAndSort(cookie => {
       return cookie.name === name && this._match(cookie)
     })
-
-    return filtered[0] || null
   }
 
   _filterAndSort (fn) {
@@ -105,8 +107,6 @@ export default class CookieStore {
     if (!path) {
       error('no path specified', 'NO_PATH')
     }
-
-    path = defaultPath(path)
 
     return new SubStore({
       domain,

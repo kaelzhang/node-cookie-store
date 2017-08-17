@@ -45,12 +45,6 @@ export default class Cookie {
   }
 
   match (domain, path) {
-    // console.log('match domain', domain, this.domain, this.hostOnly
-    //   ? domain === this.domain
-    //   : domainMatch(domain, this.domain))
-    //
-    // console.log('match path', path, this.path, pathMatch(path, this.path))
-
     if (!pathMatch(path, this.path)) {
       return false
     }
