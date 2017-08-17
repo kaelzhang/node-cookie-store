@@ -21,8 +21,8 @@ export default class Store {
       return null
     }
 
-    const expired = cookie.persistant
-      ? cookie.expiryTime > new Date
+    const expired = cookie.persistent
+      ? cookie.expiryTime < new Date
       : false
 
     if (expired) {

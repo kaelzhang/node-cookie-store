@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/kaelzhang/node-cookie-store.svg?branch=master)](https://travis-ci.org/kaelzhang/node-cookie-store)
+[![Coverage](https://codecov.io/gh/kaelzhang/node-cookie-store/branch/master/graph/badge.svg)](https://codecov.io/gh/kaelzhang/node-cookie-store)
 <!-- optional appveyor tst
 [![Windows Build Status](https://ci.appveyor.com/api/projects/status/github/kaelzhang/node-cookie-store?branch=master&svg=true)](https://ci.appveyor.com/project/kaelzhang/node-cookie-store)
 -->

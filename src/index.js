@@ -9,7 +9,7 @@ import {
 
 
 const COOKIE_HEADER_DELIMITER = '; '
-const cleanSessionCookie = cookie => cookie.persistant
+const cleanSessionCookie = cookie => cookie.persistent
 
 
 class SubStore {

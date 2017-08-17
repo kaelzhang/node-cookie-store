@@ -32,7 +32,7 @@ export default class Cookie {
     this.secureOnly = !!secure
 
     this.hostOnly = hostOnly
-    this.persistant = false
+    this.persistent = false
 
     maxAge
       ? this.maxAge = maxAge
@@ -59,12 +59,12 @@ export default class Cookie {
 Object.defineProperties(Cookie.prototype, {
   maxAge: {
     set (maxAge) {
-      if (!maxAge) {
+      if (typeof maxAge !== 'number') {
         return
       }
 
-      this.persistant = true
-      this.expiryTime = this.creationTime + maxAge
+      this.persistent = true
+      this.expiryTime = new Date(Date.now() + maxAge)
     }
   },
 
@@ -74,7 +74,11 @@ Object.defineProperties(Cookie.prototype, {
         return
       }
 
-      this.persistant = true
+      if (typeof expires === 'number') {
+        expires = new Date(expires)
+      }
+
+      this.persistent = true
       this.expiryTime = expires
     }
   },
@@ -112,21 +116,6 @@ Object.defineProperties(Cookie.prototype, {
 
     get () {
       return this._domain
-    }
-  },
-
-  httpOnly: {
-    set (httpOnly) {
-      // Set once
-      if ('_httpOnly' in this) {
-        return
-      }
-
-      this._httpOnly = !!httpOnly
-    },
-
-    get () {
-      return this._httpOnly
     }
   },
 
