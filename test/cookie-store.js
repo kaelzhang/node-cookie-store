@@ -283,6 +283,51 @@ const testReturnType = (t, expect, to, description) => {
       }
     }
   ]
+},
+
+{
+  d: 'path length filtering and sorting',
+  s: {
+    from: {
+      domain: 'foo.com',
+      path: '/a/b/c/d/e'
+    },
+    c: [{
+      name: 'foo',
+      value: 'bar',
+      path: '/a/b/c/d'
+    }, {
+      name: 'foo',
+      value: 'bar2',
+      path: '/a/'
+    }, {
+      name: 'foo',
+      value: 'bar3',
+      path: '/a/b/c'
+    }, {
+      name: 'foo',
+      value: 'bar4',
+      path: '/a/b/c/d/e/f'
+    }]
+  },
+  r: {
+    h: 'foo=bar; foo=bar3; foo=bar2'
+  }
+},
+
+{
+  d: 'domain filtering',
+  s: {
+    from: {
+      domain: 'a.b.c.d.foo.com',
+      path: '/index'
+    },
+    c: [{
+      name: 'foo',
+      value: 'bar',
+      domain: ''
+    }]
+  }
 }
 
 ].forEach(({

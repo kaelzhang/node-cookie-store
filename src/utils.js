@@ -76,7 +76,7 @@ export const pathMatch = (given, compareWith) => {
 
   // given: /abc/abc
   // compareWith: /abc
-  if (compareWith.charCodeAt(given.length) === CHAR_CODE_SLASH) {
+  if (given.charCodeAt(compareWith.length) === CHAR_CODE_SLASH) {
     return true
   }
 

@@ -8,7 +8,7 @@
     "build": "BABEL_ENV=production babel src --out-dir lib",
     "test": "nyc ava --verbose --timeout=10s",
     "prepublish": "npm run build",
-    "report-cov": "nyc report --reporter=lcov | codecov"
+    "report-cov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "files": [
     "lib/"

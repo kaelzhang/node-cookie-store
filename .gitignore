@@ -20,6 +20,7 @@
 *.db
 nohup.out
 .nyc_output
+coverage.lcov
 
 # OS or Editor folders
 .DS_Store
