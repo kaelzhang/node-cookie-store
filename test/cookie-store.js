@@ -102,6 +102,51 @@ const testReturnType = (t, expect, to, description) => {
 },
 
 {
+  d: 'if domain or path not matched, skip setting',
+  s: {
+    from: DEFAULT_FROM,
+    c: [{
+      name: 'foo',
+      value: 'bar',
+      domain: 'foo2.com'
+    }, {
+      name: 'foo2',
+      value: 'bar',
+      path: '/index/bcd'
+    }]
+  },
+  r: {
+    c: [{
+      name: 'foo',
+      isNull: true
+    }, {
+      name: 'foo2',
+      isNull: true
+    }]
+  }
+},
+
+{
+  d: 'set to an existing cookie',
+  s: {
+    from: DEFAULT_FROM,
+    c: [{
+      name: 'foo',
+      value: 'bar'
+    }, {
+      name: 'foo',
+      value: 'bar2'
+    }]
+  },
+  r: {
+    c: {
+      name: 'foo',
+      value: 'bar2'
+    }
+  }
+},
+
+{
   d: 'non-host-only top domain should be saved as .foo.com | root path',
   s: {
     from: {
