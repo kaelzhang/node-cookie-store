@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "module": "src/index.js",
   "scripts": {
-    "build": "babel src --out-dir lib",
+    "build": "BABEL_ENV=production babel src --out-dir lib",
     "test": "nyc ava --verbose --timeout=10s",
     "prepublish": "npm run build",
     "report-cov": "nyc report --reporter=lcov | codecov"

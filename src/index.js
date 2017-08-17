@@ -35,6 +35,15 @@ class SubStore {
       value
     }
 
+    return this._set(data)
+  }
+
+  setCookie (header) {
+    const data = parseSetCookie(header)
+    return this._set(data)
+  }
+
+  _set (data) {
     // > If the domain-attribute is empty.
     if (!data.domain) {
       // > Set the cookie's domain to the canonicalized request-host.
@@ -47,15 +56,6 @@ class SubStore {
       data.path = this._path
     }
 
-    return this._set(data)
-  }
-
-  setCookie (header) {
-    const data = parseSetCookie(header)
-    return this._set(data)
-  }
-
-  _set (data) {
     return this._store.set(data, this._match)
   }
 

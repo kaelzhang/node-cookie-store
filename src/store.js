@@ -41,6 +41,9 @@ export default class Store {
     })
   }
 
+
+  // @param `Object` data
+  // @param `Function` checker
   set (data, checker) {
     const {
       name,

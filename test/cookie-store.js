@@ -11,6 +11,38 @@ const DEFAULT_FROM = {
   path: '/index/abc'
 }
 
+
+const create = f => {
+  const cs = new CookieStore
+  const cookie = cs.from(f)
+  return [cs, cookie]
+}
+
+// @returns `Boolean` whether should return
+const tryCatch = (t, runner, messagePrefix, expectedErrorCode) => {
+  try {
+    runner()
+  } catch (e) {
+    if (!expectedErrorCode) {
+      t.fail(`${messagePrefix}: unexpected error: ${e.stack}`)
+      return true
+    }
+
+    t.is(e.code, expectedErrorCode, `${messagePrefix}: error code not match`)
+    return true
+  }
+
+  if (expectedErrorCode) {
+    t.fail(`${messagePrefix}: should have errors`)
+    return true
+  }
+}
+
+
+const testReturnType = (t, expect, to, description) => {
+  t.is(expect instanceof to, true, `the return type of ${description} is wrong`)
+}
+
 ;[
 {
   d: 'basic, hostOnly, default-cookie-path, path not match',
@@ -23,22 +55,39 @@ const DEFAULT_FROM = {
       name: 'foo',
       value: 'bar',
       // ...options
-    }
+    },
+
+    h: {
+      h: 'foo2=1',
+      // e: setCookie error
+    },
+
+    // h: Set-Cookie header
+
+    // r: cookie to be removed
   },
 
   // read from
   r: [{
-    // defaults to s.from
+    // Optional
+    // from: defaults to s.from
 
     // cookie expected
-    c: {
+    c: [{
       name: 'foo',
       value: 'bar',
       hostOnly: true,
       path: '/index'
-    },
+    }, {
+      name: 'foo2',
+      value: '1',
+      hostOnly: true,
+      path: '/index'
+    }],
 
-    h: 'foo=bar'
+    // expected header Set-Cookie
+    // foo which has earlier creation time comes first
+    h: 'foo=bar; foo2=1'
   }, {
     from: {
       domain: 'foo.com',
@@ -146,6 +195,49 @@ const DEFAULT_FROM = {
     },
     e: 'NO_DOMAIN'
   }]
+},
+
+{
+  d: 'remove cookies',
+  s: [{
+    from: DEFAULT_FROM,
+    c: [{
+      name: 'foo',
+      bar: 'bar'
+    }],
+
+  }, {
+    from: {
+      domain: 'foo2.com',
+      path: '/'
+    },
+    c: [{
+      name: 'foo2',
+      bar: 'bar'
+    }],
+    // basic remove
+    // foo2 will be removed, but foo not
+    r: ['foo', 'foo2']
+  }],
+  r: [
+    // {
+    //   from: DEFAULT_FROM,
+    //   c: {
+    //     name: 'foo',
+    //     value: 'bar'
+    //   }
+    // },
+    {
+      from: {
+        domain: 'foo2.com',
+        path: '/'
+      },
+      c: {
+        name: 'foo',
+        isNull: true
+      }
+    }
+  ]
 }
 
 ].forEach(({
@@ -165,28 +257,20 @@ const DEFAULT_FROM = {
     makeArray(s).forEach(({
       from: _from,
       c,
-      e
+      e,
+      h,
+      r
     }) => {
 
       let cookie
 
-      try {
-        cookie = cs.from(_from)
-      } catch (error) {
-        if (!e) {
-          t.fail('expected error:' + e.stack)
-          return
-        }
-
-        t.is(error.code, e, 'cs.from: error code not match')
+      if (
+        tryCatch(t, () => {
+          cookie = cs.from(_from)
+        }, `cs.from(${JSON.stringify(_from)})`, e)
+      ) {
         return
       }
-
-      if (e) {
-        t.fail('cs.from: should have errors')
-        return
-      }
-
 
       makeArray(c).forEach(({
         name,
@@ -197,24 +281,36 @@ const DEFAULT_FROM = {
 
         let ret
 
-        try {
-          ret = cookie.set(name, value, options)
-        } catch (error) {
-          if (!e) {
-            t.fail('expected error:' + e.stack)
-            return
-          }
-
-          t.is(error.code, e, 'cookie.set: error code not match')
+        if (
+          tryCatch(t, () => {
+            ret = cookie.set(name, value, options)
+          }, `cookie.set("${name}")`, e)
+        ) {
           return
         }
 
-        if (e) {
-          t.fail('cookie.set: should have errors')
+        testReturnType(t, ret, Cookie, `cookie.set("${name}")`)
+      })
+
+      makeArray(h).forEach(({
+        h,
+        e
+      }) => {
+        let ret
+
+        if (
+          tryCatch(t, () => {
+            ret = cookie.setCookie(h)
+          }, `cookie.setCookie(${h})`, e)
+        ) {
           return
         }
 
-        t.is(ret instanceof Cookie, true, 'the return type of cookie.set() is wrong')
+        testReturnType(t, ret, Cookie, `cookie.setCookie("${h}")`)
+      })
+
+      makeArray(r).forEach(name => {
+        cookie.remove(name)
       })
 
     })
@@ -231,7 +327,7 @@ const DEFAULT_FROM = {
       }) => {
 
         if (!_from) {
-          _from = makeArray(s.from)[0]
+          _from = makeArray(makeArray(s)[0].from)[0]
         }
 
         const cookie = cs.from(_from)
@@ -280,22 +376,30 @@ test('maxAge must be a number', async t => {
   c.maxAge = {}
   t.is(c.expiryTime, undefined, 'should ignore object')
 
-  c.maxAge = 50
+  c.maxAge = 100
 
   await delay(1)
   t.is(cookie.get('foo').value, 'bar', 'should not expire')
 
-  await delay(50)
+  await delay(100)
   t.is(cookie.get('foo'), null, 'should expire')
 })
 
 
 test('restart', async t => {
-  const cs = new CookieStore
-  const cookie = cs.from(DEFAULT_FROM)
+  const [cs, cookie] = create(DEFAULT_FROM)
 
   cookie.set('foo', 'bar')
   cs.restart()
 
   t.is(cookie.get('foo'), null, 'should filter out session cookie')
+})
+
+
+test('the error cs.from(NO-ARGS) should be NO_DOMAIN', async t => {
+  const cs = new CookieStore
+
+  tryCatch(t, () => {
+    cs.from()
+  }, 'cs.from(NOTHING)', 'NO_DOMAIN')
 })
