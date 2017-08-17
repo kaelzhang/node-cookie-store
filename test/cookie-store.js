@@ -417,6 +417,66 @@ const testReturnType = (t, expect, to, description) => {
       value: 'bar'
     }
   }
+},
+
+{
+  d: 'non-http apis',
+  s: [{
+    from: DEFAULT_FROM,
+    c: {
+      name: 'foo',
+      value: 'bar',
+      httpOnly: true
+    }
+  }, {
+    from: {
+      ...DEFAULT_FROM,
+      http: false
+    },
+    c: [{
+      // try to override a httpOnly cookie
+      name: 'foo',
+      value: 'bar2',
+      returnNull: true
+    }, {
+      // try to create a httpOnly cookie
+      name: 'foo2',
+      value: 'bar',
+      httpOnly: true,
+      returnNull: true
+    }, {
+      name: 'foo3',
+      value: 'bar'
+    }]
+  }],
+  r: [{
+    from: DEFAULT_FROM,
+    c: [{
+      name: 'foo',
+      value: 'bar'
+    }, {
+      name: 'foo2',
+      isNull: true
+    }, {
+      name: 'foo3',
+      value: 'bar'
+    }]
+  }, {
+    from: {
+      ...DEFAULT_FROM,
+      http: false
+    },
+    c: [{
+      name: 'foo',
+      isNull: true
+    }, {
+      name: 'foo2',
+      isNull: true
+    }, {
+      name: 'foo3',
+      value: 'bar'
+    }]
+  }]
 }
 
 ].forEach(({

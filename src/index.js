@@ -25,7 +25,14 @@ class SubStore {
     this._store = store
     this._http = http
 
-    this._match = cookie => cookie.match(this._domain, this._path)
+    this._match = this._match.bind(this)
+  }
+
+  _match (cookie) {
+    // domain and path should match
+    return cookie.match(this._domain, this._path)
+    // handle http-only-flag
+    && (this._http || !cookie.httpOnly)
   }
 
   set (name, value, options) {
@@ -111,6 +118,7 @@ export default class CookieStore {
     return new SubStore({
       domain,
       path,
+      http,
       store: this._store
     })
   }

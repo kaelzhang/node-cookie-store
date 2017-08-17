@@ -46,7 +46,7 @@ handler.get('foo').value
 // 'a'
 ```
 
-## cs.from({domain, path, nonHTTP}) : Handler
+## cs.from({domain, path, http}) : Handler
 
 - **domain** `String`
 - **path** `String`
