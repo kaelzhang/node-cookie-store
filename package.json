@@ -1,7 +1,7 @@
 {
   "name": "cookie-store",
   "version": "1.0.2",
-  "description": "An RFC-6265 cookie store to implement the mechanism of HTTP cookie and Set-Cookie header fields as a browser do.",
+  "description": "An RFC-6265 cookie store to implement the mechanism of HTTP cookie and Set-Cookie header fields as a browser does.",
   "main": "lib/index.js",
   "module": "src/index.js",
   "scripts": {
